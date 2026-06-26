@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Morning Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ───── MASTHEAD ───── -->
+<header class="masthead">
+  <div class="masthead-top">
+    <span class="issue-info" id="issueDate">Loading...</span>
+    <div class="masthead-logo">
+      <span class="logo-eyebrow">The Daily</span>
+      <h1 class="logo-title">AI BRIEF</h1>
+      <span class="logo-sub">For AI Professionals</span>
+    </div>
+    <span class="issue-info issue-right">Morning Edition</span>
+  </div>
+  <div class="masthead-rule"></div>
+  <nav class="section-nav">
+    <a href="#verse">✦ 오늘의 말씀</a>
+    <a href="#calendar">✦ 일정</a>
+    <a href="#ainews">✦ AI 뉴스</a>
+    <a href="#jobs">✦ AI 채용</a>
+    <a href="#tools">✦ 추천 도구</a>
+  </nav>
+  <div class="masthead-rule thin"></div>
+</header>
+
+<main class="page">
+
+  <!-- ───── ROW 1: VERSE + WEATHER + CALENDAR ───── -->
+  <section class="row row-top" id="verse">
+    
+    <!-- 성경 말씀 (메인 칼럼) -->
+    <article class="col-main verse-block">
+      <div class="section-eyebrow">오늘의 말씀</div>
+      <blockquote class="verse-text" id="verseText">
+        <span class="verse-loading">말씀을 불러오는 중...</span>
+      </blockquote>
+      <cite class="verse-ref" id="verseRef"></cite>
+      <p class="verse-reflection" id="verseReflection"></p>
+    </article>
+
+    <!-- 사이드: 날짜 + 달력 요약 -->
+    <aside class="col-side" id="calendar">
+      <div class="section-eyebrow">오늘의 일정</div>
+      
+      <div class="date-display">
+        <div class="date-big" id="dateBig">--</div>
+        <div class="date-detail" id="dateDetail">--</div>
+      </div>
+
+      <div class="calendar-connect">
+        <button class="btn-calendar" id="calBtn" onclick="connectCalendar()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Google 캘린더 연결
+        </button>
+        <p class="cal-note">OAuth 인증 후 오늘 일정이 여기 표시됩니다</p>
+      </div>
+
+      <div class="events-list" id="eventsList">
+        <!-- 캘린더 연결 후 채워짐 / 데모 데이터 -->
+        <div class="event-item demo">
+          <span class="event-time">09:00</span>
+          <div class="event-detail">
+            <span class="event-title">팀 스탠드업</span>
+            <span class="event-loc">Google Meet</span>
+          </div>
+          <span class="event-badge meeting">회의</span>
+        </div>
+        <div class="event-item demo">
+          <span class="event-time">14:00</span>
+          <div class="event-detail">
+            <span class="event-title">AI 모델 리뷰</span>
+            <span class="event-loc">Zoom</span>
+          </div>
+          <span class="event-badge work">업무</span>
+        </div>
+        <div class="event-item demo">
+          <span class="event-time">17:30</span>
+          <div class="event-detail">
+            <span class="event-title">세미나: LLM 최신 동향</span>
+            <span class="event-loc">온라인</span>
+          </div>
+          <span class="event-badge learn">학습</span>
+        </div>
+        <p class="demo-note">↑ 데모 데이터 — 캘린더 연결 시 실제 일정으로 교체</p>
+      </div>
+    </aside>
+
+  </section>
+
+  <div class="section-rule"><span>AI NEWS</span></div>
+
+  <!-- ───── ROW 2: AI 뉴스 ───── -->
+  <section class="row row-news" id="ainews">
+
+    <div class="news-header-row">
+      <div class="section-eyebrow">오늘의 AI 뉴스</div>
+      <button class="btn-refresh" onclick="loadAINews()">↻ 새로고침</button>
+    </div>
+
+    <!-- 주요 뉴스 (히어로) -->
+    <div class="news-hero" id="newsHero">
+      <div class="news-skeleton">뉴스를 불러오는 중...</div>
+    </div>
+
+    <!-- 서브 뉴스 그리드 -->
+    <div class="news-grid" id="newsGrid">
+      <!-- JS로 채워짐 -->
+    </div>
+
+  </section>
+
+  <div class="section-rule"><span>AI JOBS</span></div>
+
+  <!-- ───── ROW 3: 채용 정보 ───── -->
+  <section class="row" id="jobs">
+    <div class="section-eyebrow">AI 채용 트렌드</div>
+    
+    <div class="jobs-bar">
+      <div class="jobs-filter">
+        <button class="filter-btn active" onclick="filterJobs('all', this)">전체</button>
+        <button class="filter-btn" onclick="filterJobs('ml', this)">ML Engineer</button>
+        <button class="filter-btn" onclick="filterJobs('llm', this)">LLM / NLP</button>
+        <button class="filter-btn" onclick="filterJobs('data', this)">Data Science</button>
+        <button class="filter-btn" onclick="filterJobs('product', this)">AI Product</button>
+      </div>
+      <button class="btn-refresh" onclick="loadJobs()">↻ 새로고침</button>
+    </div>
+
+    <div class="jobs-grid" id="jobsGrid">
+      <!-- JS로 채워짐 -->
+    </div>
+
+    <p class="data-source">데이터 출처: 원티드, LinkedIn, 사람인 (실시간 연동 시 API 키 필요)</p>
+  </section>
+
+  <div class="section-rule"><span>TODAY'S TOOLS</span></div>
+
+  <!-- ───── ROW 4: AI 도구 추천 ───── -->
+  <section class="row" id="tools">
+    <div class="section-eyebrow">오늘의 AI 도구 Pick</div>
+    <div class="tools-grid" id="toolsGrid">
+      <!-- JS로 채워짐 -->
+    </div>
+  </section>
+
+</main>
+
+<!-- ───── FOOTER ───── -->
+<footer class="footer">
+  <div class="footer-rule"></div>
+  <div class="footer-inner">
+    <span>AI Morning Brief © 2025</span>
+    <span class="footer-mid">설정: <a href="settings.html">알림 & API 키 관리</a></span>
+    <span id="footerTime"></span>
+  </div>
+</footer>
+
+<!-- 캘린더 모달 -->
+<div class="modal-overlay" id="calModal" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Google 캘린더 연결</h3>
+      <button onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>Google Calendar API를 연결하려면 아래 단계를 따르세요:</p>
+      <ol class="setup-steps">
+        <li><strong>Google Cloud Console</strong>에서 프로젝트 생성</li>
+        <li>Calendar API 활성화</li>
+        <li>OAuth 2.0 클라이언트 ID 발급</li>
+        <li><code>config.js</code>에 클라이언트 ID 입력</li>
+      </ol>
+      <div class="config-preview">
+        <code>// config.js<br>
+const CONFIG = {<br>
+&nbsp;&nbsp;GOOGLE_CLIENT_ID: "your-client-id.apps.googleusercontent.com",<br>
+&nbsp;&nbsp;BIBLE_API_KEY: "your-bible-api-key", // scripture.api.bible<br>
+&nbsp;&nbsp;NEWS_API_KEY: "your-newsapi-key"   // newsapi.org<br>
+};</code>
+      </div>
+      <a href="https://console.cloud.google.com" target="_blank" class="btn-primary">Google Cloud Console 열기 →</a>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>설정 — AI Morning Brief</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .settings-page { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
+  .settings-title { font-family: var(--font-serif); font-size: 32px; font-weight: 900; margin-bottom: 6px; }
+  .settings-sub { font-size: 14px; color: var(--ink-mute); margin-bottom: 40px; }
+
+  .setting-group { margin-bottom: 40px; }
+  .setting-group-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); border-bottom: 2px solid var(--ink); padding-bottom: 8px; margin-bottom: 20px;
+  }
+
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+  .field small { display: block; font-size: 11px; color: var(--ink-mute); margin-top: 4px; }
+  .field a { color: var(--accent-blue); font-size: 11px; }
+
+  .field input, .field select {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--rule-thin);
+    border-radius: 3px; font-size: 13px; font-family: monospace;
+    background: var(--white); color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  .field input:focus, .field select:focus {
+    outline: none; border-color: var(--ink);
+  }
+
+  .save-btn {
+    padding: 12px 28px; background: var(--ink); color: var(--white); border: none;
+    border-radius: 3px; font-size: 14px; font-weight: 600; cursor: pointer; letter-spacing: 0.05em;
+    transition: background 0.15s;
+  }
+  .save-btn:hover { background: var(--accent); }
+
+  .info-box {
+    background: #EEF3FF; border: 1px solid #B8C9F0; border-radius: 3px;
+    padding: 14px 16px; margin-bottom: 20px; font-size: 13px; color: #1A4FBB; line-height: 1.6;
+  }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600;
+    color: var(--ink-mute); margin-bottom: 24px; }
+  .back-link:hover { color: var(--ink); text-decoration: none; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: var(--white);
+    padding: 12px 20px; border-radius: 3px; font-size: 13px; font-weight: 500;
+    transform: translateY(80px); opacity: 0; transition: all 0.3s; z-index: 9999; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+<div class="settings-page">
+  <a href="index.html" class="back-link">← AI Morning Brief로 돌아가기</a>
+
+  <h1 class="settings-title">설정</h1>
+  <p class="settings-sub">API 키와 표시 설정을 관리합니다. 모든 정보는 브라우저에만 저장됩니다.</p>
+
+  <div class="info-box">
+    ℹ️ 입력한 API 키는 브라우저의 <strong>localStorage</strong>에만 저장되며, 외부 서버로 전송되지 않습니다.<br>
+    실제 운영 시에는 <code>config.js</code> 파일에 직접 입력하거나, 서버사이드 프록시를 사용하세요.
+  </div>
+
+  <!-- 성경 API -->
+  <div class="setting-group">
+    <div class="setting-group-title">📖 성경 말씀 설정</div>
+    <div class="field">
+      <label>Scripture API Key</label>
+      <input type="password" id="bibleKey" placeholder="scripture.api.bible 에서 발급">
+      <small>무료 가입 후 즉시 발급 · <a href="https://scripture.api.bible" target="_blank">scripture.api.bible →</a></small>
+    </div>
+    <div class="field">
+      <label>성경 버전</label>
+      <select id="bibleVersion">
+        <option value="de4e12af7fb5a05f-01">개역개정 (한국어)</option>
+        <option value="9879dbb7cfe39e4d-04">English Standard Version</option>
+        <option value="de4e12af7fb5a05f-02">개역한글</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 뉴스 API -->
+  <div class="setting-group">
+    <div class="setting-group-title">📰 AI 뉴스 설정</div>
+    <div class="field">
+      <label>NewsAPI Key</label>
+      <input type="password" id="newsKey" placeholder="newsapi.org 에서 발급 (무료 100req/day)">
+      <small><a href="https://newsapi.org/register" target="_blank">newsapi.org →</a> 무료 플랜으로 충분</small>
+    </div>
+    <div class="field">
+      <label>뉴스 언어</label>
+      <select id="newsLang">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>검색 키워드 (쉼표로 구분)</label>
+      <input type="text" id="newsKeywords" value="artificial intelligence, ChatGPT, Claude AI, LLM, 인공지능"
+        style="font-family: var(--font-sans);">
+    </div>
+  </div>
+
+  <!-- Google Calendar -->
+  <div class="setting-group">
+    <div class="setting-group-title">📅 Google 캘린더 설정</div>
+    <div class="field">
+      <label>Google OAuth Client ID</label>
+      <input type="text" id="gClientId" placeholder="xxxxxxxx.apps.googleusercontent.com">
+      <small>
+        <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a>에서
+        Calendar API 활성화 → OAuth 2.0 클라이언트 ID 생성<br>
+        승인된 JavaScript 원본에 현재 도메인을 추가하세요.
+      </small>
+    </div>
+  </div>
+
+  <!-- 표시 설정 -->
+  <div class="setting-group">
+    <div class="setting-group-title">⚙️ 표시 설정</div>
+    <div class="field">
+      <label>뉴스 최대 개수</label>
+      <select id="maxNews">
+        <option value="4">4개</option>
+        <option value="6" selected>6개</option>
+        <option value="9">9개</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>채용 정보 최대 개수</label>
+      <select id="maxJobs">
+        <option value="4">4개</option>
+        <option value="8" selected>8개</option>
+        <option value="12">12개</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="save-btn" onclick="saveSettings()">설정 저장</button>
+</div>
+
+<div class="toast" id="toast">✓ 설정이 저장되었습니다</div>
+
+<script>
+  // 저장된 설정 불러오기
+  window.addEventListener("DOMContentLoaded", () => {
+    const s = JSON.parse(localStorage.getItem("ambConfig") || "{}");
+    if (s.bibleKey)    document.getElementById("bibleKey").value = s.bibleKey;
+    if (s.bibleVersion) document.getElementById("bibleVersion").value = s.bibleVersion;
+    if (s.newsKey)     document.getElementById("newsKey").value = s.newsKey;
+    if (s.newsLang)    document.getElementById("newsLang").value = s.newsLang;
+    if (s.newsKeywords) document.getElementById("newsKeywords").value = s.newsKeywords;
+    if (s.gClientId)   document.getElementById("gClientId").value = s.gClientId;
+    if (s.maxNews)     document.getElementById("maxNews").value = s.maxNews;
+    if (s.maxJobs)     document.getElementById("maxJobs").value = s.maxJobs;
+  });
+
+  function saveSettings() {
+    const cfg = {
+      bibleKey:     document.getElementById("bibleKey").value.trim(),
+      bibleVersion: document.getElementById("bibleVersion").value,
+      newsKey:      document.getElementById("newsKey").value.trim(),
+      newsLang:     document.getElementById("newsLang").value,
+      newsKeywords: document.getElementById("newsKeywords").value.trim(),
+      gClientId:    document.getElementById("gClientId").value.trim(),
+      maxNews:      document.getElementById("maxNews").value,
+      maxJobs:      document.getElementById("maxJobs").value,
+    };
+    localStorage.setItem("ambConfig", JSON.stringify(cfg));
+
+    const toast = document.getElementById("toast");
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2800);
+  }
+</script>
+</body>
+</html>
